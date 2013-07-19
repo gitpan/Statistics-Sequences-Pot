@@ -6,7 +6,7 @@ WriteMakefile
   'NAME' => 'Statistics::Sequences::Pot',
   'VERSION_FROM' => 'lib/Statistics/Sequences/Pot.pm',
   'PREREQ_PM' => {
-                   'Statistics::Sequences' => '0.10',
+                   'Statistics::Sequences' => '0.11',
                    'Statistics::Zed' => '0.072',
                    'Test::More' => 0
                  },

@@ -7,7 +7,7 @@ use Carp 'croak';
 use vars qw($VERSION @ISA);
 use Statistics::Sequences 0.10;
 @ISA = qw(Statistics::Sequences);
-$VERSION = '0.10';
+$VERSION = '0.11';
 use Statistics::Zed 0.072;
 our $zed = Statistics::Zed->new();
 
@@ -20,7 +20,7 @@ Statistics::Sequences::Pot - Helmut Schmidt's test of force-like runs of a discr
 =head1 SYNOPSIS
 
  use strict;
- use Statistics::Sequences::Pot 0.10; # methods/args here are not compatible with earlier versions
+ use Statistics::Sequences::Pot 0.11; # methods/args here are not compatible with earlier versions
  my $pot = Statistics::Sequences::Pot->new();
  $pot->load([qw/2 0 8 5 3 5 2 3 1 1 9 4 4 1 5 5 6 5 8 7 5 3 8 5 6/]); # strings/numbers; or send as "data => $aref" with each stat call
  my $val = $pot->observed(state => 5); # other methods include: expected(), variance(), obsdev() and stdev()
@@ -77,7 +77,7 @@ See L<Statistics::Data> for these additional operations on data that have been l
 
 Returns observed value of pot, a measure of the number and size of bunchings of the state that occurred within the array. The data to calculate this on can already have been L<load|load>ed, or you send it here as a flat referenced array keyed as B<data>. The observed value of pot is based on Schmidt (2000), Equations 6-7, and his Appended program, viz.:
 
-=for html <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>I</i>,<i>J</i>=1..<i>N</i><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM&nbsp;&nbsp;<i>r</i><sup>|<i>n</i>(<i>I</i>) - <i>n</i>(<i>J</i>)|</sup><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>I</i>&lt;<i>J</i></p>
+=for html <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>I</i>,<i>J</i>=1..<i>N</i><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Sigma;&nbsp;&nbsp;<i>r</i><sup>|<i>n</i>(<i>I</i>) - <i>n</i>(<i>J</i>)|</sup><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>I</i>&lt;<i>J</i></p>
 
 where 
 
@@ -91,7 +91,7 @@ The state within the data whose bunching is to be tested. This is the only requi
 
 B<scale> => I<numeric> E<gt>= 1
 
-Optionally, the scale of the range parameter, which should be greater than or equal to 1. Default = 1; values less than 1 are effected as 1. For info on how to set this parameter, see the L</DESCRIPTION> above, and also the explanation of C<observed> among the statistical L</ATTRIBUTES>.
+Optionally, the scale of the range parameter, which should be greater than or equal to 1. Default = 1; values less than 1 are effected as 1.
 
 In most situations, should all states be equiprobable, or their probability be proportionate to their number, I<r> would reflect the average distance, or delay, between I<successive> states, equal to the number of all observations divided by the number of states. For example, if there were 10 possible states, and 100 observations have been made, then the probability of re-occurrence of any one of the 10 states within any slot will be equal to 100/10, with I<S> = 1, i.e., expecting that any one of the states would mostly occur by a spacing of 10, and then by an exponentially declining tendency toward consecutive occurrence. In this way, with I<S> = 1, Pot can be considered to be a measure of "short-range bunching," as Schmidt called it. Bunching over a larger range than this minimally expected range can be measured with I<S> > 1. This is specified, optionally, as the argument named B<scale> to L<test|test>. Hypothesis-testing might be made with respect to various values of the B<scale> parameter.
 
@@ -99,13 +99,6 @@ In most situations, should all states be equiprobable, or their probability be p
 
 sub observed {# measure pot in the given data for given state, Schmidt (2000) Equations 6-7:
     my ($m, $n, $r, $scale, $state, $indices) = _set_terms(@_);
-    # Lump relevant quantities into the Pot object:
-    #$self->{'state'} = $state;
-    #$self->{'samplings'} = $m;
-    #$self->{'count'} = $n;
-    #$self->{'range'} = $n ? ( $scale * $m / $n ) : '';
-    #$self->{'scale'} = $scale;
-    #$self->{'range_e'} = $r;
     my ($pvo, $i, $j) = (0);
     for $i (1 .. ($n - 1)) {
         for $j (0 .. $i - 1) {
@@ -293,10 +286,6 @@ sub _set_terms {
     $scale = (!$args->{'scale'} or $args->{'scale'} < 1) ? 1 : $args->{'scale'}; # assume scale = 1 if not specified or invalid
     $r = _range($n, $m, $scale);
     return ($m, $n, $r, $scale, $state, $indices, $bunches, $spaces);
-}
-
-sub _scale {
-
 }
 
 sub _range { # init range parameter

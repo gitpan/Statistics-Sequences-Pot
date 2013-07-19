@@ -1,6 +1,9 @@
-Revision history for Statistics-Sequences-Pot-0.06
+Revision history for Statistics-Sequences-Pot-0.11
 
-0.06
+0.11    July 2013
+        Misc POD revisions and dist issues
+
+0.10    June 2013
         + NOT compatible with earlier versions
         + add discrete methods for descriptives - observed, expected, variance, obsdev, stdev
         + add stats_hash() method

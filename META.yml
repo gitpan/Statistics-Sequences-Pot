@@ -3,7 +3,7 @@ abstract: "Helmut Schmidt's test of force-like runs of a discrete state within a
 author:
   - 'Roderick Garton <rgarton@cpan.org>'
 build_requires:
-  Statistics::Sequences: 0.10
+  Statistics::Sequences: 0.11
   Statistics::Zed: 0.072
   Test::More: 0
 configure_requires:
@@ -17,9 +17,9 @@ name: Statistics-Sequences-Pot
 provides:
   Statistics::Sequences::Pot:
     file: lib/Statistics/Sequences/Pot.pm
-    version: 0.10
+    version: 0.11
 requires:
   perl: 5.006
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.10
+version: 0.11
