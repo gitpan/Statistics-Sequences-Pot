@@ -19,7 +19,7 @@ my $builder = Module::Build->new(
     requires => {
         'perl' => 5.006,
     },
-    add_to_cleanup      => [ 'Statistics-Sequences-Pot-0.11-*' ],
+    add_to_cleanup      => [ 'Statistics-Sequences-Pot-0.12-*' ],
     create_makefile_pl => 'traditional',
 );
 

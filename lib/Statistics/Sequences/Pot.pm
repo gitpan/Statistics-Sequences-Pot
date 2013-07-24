@@ -7,7 +7,7 @@ use Carp 'croak';
 use vars qw($VERSION @ISA);
 use Statistics::Sequences 0.10;
 @ISA = qw(Statistics::Sequences);
-$VERSION = '0.11';
+$VERSION = '0.12';
 use Statistics::Zed 0.072;
 our $zed = Statistics::Zed->new();
 
@@ -20,7 +20,7 @@ Statistics::Sequences::Pot - Helmut Schmidt's test of force-like runs of a discr
 =head1 SYNOPSIS
 
  use strict;
- use Statistics::Sequences::Pot 0.11; # methods/args here are not compatible with earlier versions
+ use Statistics::Sequences::Pot 0.12; # methods/args here are not compatible with earlier versions
  my $pot = Statistics::Sequences::Pot->new();
  $pot->load([qw/2 0 8 5 3 5 2 3 1 1 9 4 4 1 5 5 6 5 8 7 5 3 8 5 6/]); # strings/numbers; or send as "data => $aref" with each stat call
  my $val = $pot->observed(state => 5); # other methods include: expected(), variance(), obsdev() and stdev()
@@ -46,7 +46,7 @@ Running the Pot-test involves testing its significance as a standard "z" score; 
 
 =head1 METHODS
 
-Methods are essentially as described in L<Statistics::Sequences>. See this manpage for how to handle non-dichotomous data, e.g., numerical data, or those with more than two categories; the relevant methods are not described here.
+Methods are essentially as described in L<Statistics::Sequences>
 
 =head2 new
 
@@ -60,9 +60,9 @@ Returns a new Pot object. Expects/accepts no arguments but the classname.
  $pot->load(\@data);
  $pot->load('sample1' => \@data); # labelled whatever
 
-Loads data anonymously or by name - see L<load|Statistics::Data/load, load_data> in the Statistics::Data manpage for details on the various ways data can be loaded and then retrieved (more than shown here).
+Loads data anonymously or by name - see L<load|Statistics::Data/load, load_data> in the Statistics::Data manpage for details on the various ways data can be loaded and then retrieved (more than shown here). 
 
-Data can be categorical or numerical. Unlike in tests of L<runs|Statistics::Sequences::Runs> or L<joins|Statistics::Sequences::Joins>, data here do not have to be dichotomous.
+Data can be categorical or numerical, and multi-valued - i.e, unlike in tests of L<runs|Statistics::Sequences::Runs> and L<joins|Statistics::Sequences::Joins>, they do not have to be dichotomous.
 
 =head2 add, read, unload
 
@@ -93,7 +93,7 @@ B<scale> => I<numeric> E<gt>= 1
 
 Optionally, the scale of the range parameter, which should be greater than or equal to 1. Default = 1; values less than 1 are effected as 1.
 
-In most situations, should all states be equiprobable, or their probability be proportionate to their number, I<r> would reflect the average distance, or delay, between I<successive> states, equal to the number of all observations divided by the number of states. For example, if there were 10 possible states, and 100 observations have been made, then the probability of re-occurrence of any one of the 10 states within any slot will be equal to 100/10, with I<S> = 1, i.e., expecting that any one of the states would mostly occur by a spacing of 10, and then by an exponentially declining tendency toward consecutive occurrence. In this way, with I<S> = 1, Pot can be considered to be a measure of "short-range bunching," as Schmidt called it. Bunching over a larger range than this minimally expected range can be measured with I<S> > 1. This is specified, optionally, as the argument named B<scale> to L<test|test>. Hypothesis-testing might be made with respect to various values of the B<scale> parameter.
+In most situations, should all states be equiprobable, or their probability be proportionate to their number, I<r> would reflect the average distance, or delay, between I<successive> states, equal to the number of all observations divided by the number of states. For example, if there were 10 possible states, and 100 observations have been made, then the probability of re-occurrence of any one of the 10 states within any slot will be equal to 100/10, with I<S> = 1, i.e., expecting that any one of the states would mostly occur by a spacing of 10, and then by an exponentially declining tendency toward consecutive occurrence. In this way, with I<S> = 1, Pot is a measure of "short-range bunching," as Schmidt called it. Bunching over a larger range than this minimally expected range can be measured with I<S> > 1. This is specified, optionally, as the argument named B<scale> to L<test|test>. Hypothesis-testing might be made with respect to various values of the B<scale> parameter.
 
 =cut
 
@@ -229,7 +229,7 @@ sub z_value {
  $p = $pot->p_value(ccorr => 0|1, tails => 1|2, state => 'x'); # normal-approximation based on loaded data
  $p = $pot->p_value(data => $aref, ccorr => 1, tails => 2, state => 'x'); #  using given data (by-passing load and read)
 
-Test the currently loaded data for significance of the vale of pot. Returns the Pot object, lumped with a C<z_value>, C<p_value>, and the descriptives C<observed>, C<expected> and C<variance>. 
+Test the currently loaded data for significance of the vale of pot. Returns the zscore from test of pot deviation, or, called wanting an array, the z-value with its I<p>-value for the tails (1 or 2) given. 
 
 =cut
 
@@ -243,15 +243,15 @@ sub p_value {
 
 =head2 stats_hash
 
- $href = $joins->stats_hash(values => {observed => 1, expected => 1, variance => 1, z_value => 1, p_value => 1}, prob => .5, ccorr => 1);
+ $href = $pot->stats_hash(values => {observed => 1, expected => 1, variance => 1, z_value => 1, p_value => 1}, prob => .5, ccorr => 1);
 
-Returns a hashref for the counts and stats as specified in its "values" argument, and with any options for calculating them (e.g., exact for p_value). See L<Statistics::Sequences/stats_hash> for details. If calling via a "joins" object, the option "stat => 'joins'" is not needed (unlike when using the parent "sequences" object).
+Returns a hashref for the counts and stats as specified by hashref in its "values" argument, and with any options for calculating them. See L<Statistics::Sequences/stats_hash> for details.
 
 =head2 dump
 
- $joins->dump(values => { observed => 1, variance => 1, p_value => 1}, exact => 1, flag => 1,  precision_s => 3); # among other options
+ $pot->dump(values => { observed => 1, variance => 1, p_value => 1}, exact => 1, flag => 1,  precision_s => 3); # among other options
 
-Print Joins-test results to STDOUT. See L<dump|Statistics::Sequences/dump> in the Statistics::Sequences manpage for details.
+Print Pot-test results to STDOUT. See L<dump|Statistics::Sequences/dump> in the Statistics::Sequences manpage for details.
 
 =cut
 

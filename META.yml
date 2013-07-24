@@ -17,9 +17,9 @@ name: Statistics-Sequences-Pot
 provides:
   Statistics::Sequences::Pot:
     file: lib/Statistics/Sequences/Pot.pm
-    version: 0.11
+    version: 0.12
 requires:
   perl: 5.006
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.11
+version: 0.12
